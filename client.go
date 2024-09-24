@@ -290,13 +290,13 @@ func (c *Client) handleErrorResp(resp *http.Response) error {
 	raw, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
 		return &RequestError{
-			HttpStatusCode: resp.StatusCode,
+			HTTPStatusCode: resp.StatusCode,
 			Err:            err,
 		}
 	}
-	if err := json.Unmarshal(raw, &errRes); err != nil {
+	if err = json.Unmarshal(raw, &errRes); err != nil {
 		return &RequestError{
-			HttpStatusCode: resp.StatusCode,
+			HTTPStatusCode: resp.StatusCode,
 			Err:            err,
 			Body:           raw,
 		}
