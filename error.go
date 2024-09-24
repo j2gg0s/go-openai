@@ -102,7 +102,7 @@ func (e *APIError) UnmarshalJSON(data []byte) (err error) {
 }
 
 func (e *RequestError) Error() string {
-	return fmt.Sprintf("error, status code: %d, message: %s", e.HTTPStatusCode, e.Err)
+	return fmt.Sprintf("error, status code: %d, message: %s, body: %s", e.HTTPStatusCode, e.Err, string(e.Body))
 }
 
 func (e *RequestError) Unwrap() error {
