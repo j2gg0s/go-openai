@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"io/ioutil"
 	"net/http"
 	"net/url"
 	"strings"
@@ -286,18 +287,20 @@ func (c *Client) baseURLWithAzureDeployment(baseURL, suffix, model string) (newB
 
 func (c *Client) handleErrorResp(resp *http.Response) error {
 	var errRes ErrorResponse
-	err := json.NewDecoder(resp.Body).Decode(&errRes)
-	if err != nil || errRes.Error == nil {
-		reqErr := &RequestError{
-			HTTPStatusCode: resp.StatusCode,
+	raw, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return &RequestError{
+			HttpStatusCode: resp.StatusCode,
 			Err:            err,
 		}
-		if errRes.Error != nil {
-			reqErr.Err = errRes.Error
-		}
-		return reqErr
 	}
-
+	if err := json.Unmarshal(raw, &errRes); err != nil {
+		return &RequestError{
+			HttpStatusCode: resp.StatusCode,
+			Err:            err,
+			Body:           raw,
+		}
+	}
 	errRes.Error.HTTPStatusCode = resp.StatusCode
 	return errRes.Error
 }

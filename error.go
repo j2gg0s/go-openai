@@ -27,6 +27,7 @@ type InnerError struct {
 type RequestError struct {
 	HTTPStatusCode int
 	Err            error
+	Body           []byte
 }
 
 type ErrorResponse struct {
